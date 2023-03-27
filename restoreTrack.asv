@@ -1,0 +1,8 @@
+function restoredTrack = restoreTrack(track)
+[row,~] = find(track == -80000 | track == -150000);
+
+track(row,:) = [];
+
+restoredTrack = track;
+
+end
