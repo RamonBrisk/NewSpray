@@ -60,26 +60,28 @@ topSprayTrack2 = zeros(size(topModelTrack,1)*secondNum,size(topModelTrack,2));
 
 
 yCurrent = topModelTrack(1,2);
-
+timeMarker = 1;
 for i=1:size(topModelTrack,1):firstNum*size(topModelTrack,1)
-    if rem(i,2) ~= 0
-    topSprayTrack1(i:i+8,:) = topModelTrack;
+    if timeMarker > 0
+    topSprayTrack1(i:i+size(topModelTrack,1)-1,:) = topModelTrack;
     else
-    topSprayTrack1(i:i+8,:) = reverseTrack(topModelTrack);
+    topSprayTrack1(i:i+size(topModelTrack,1)-1,:) = reverseTrack(topModelTrack);
     end
-    topSprayTrack1(i:i+8,2) = yCurrent;
+    topSprayTrack1(i:i+size(topModelTrack,1)-1,2) = yCurrent;
     yCurrent = yCurrent + trackWidth;
+    timeMarker = -1 * timeMarker;
 end
 
-
+timeMarker = 1;
 for i=1:size(topModelTrack,1):secondNum*size(topModelTrack,1)
-    if rem(i,2) ~= 0
-        topSprayTrack2(i:i+8,:) = topModelTrack;
+    if timeMarker > 0
+        topSprayTrack2(i:i+size(topModelTrack,1)-1,:) = topModelTrack;
     else
-        topSprayTrack2(i:i+8,:) = reverseTrack(topModelTrack);
+        topSprayTrack2(i:i+size(topModelTrack,1)-1,:) = reverseTrack(topModelTrack);
     end
-    topSprayTrack2(i:i+8,2) = yCurrent;
+    topSprayTrack2(i:i+size(topModelTrack,1)-1,2) = yCurrent;
     yCurrent = yCurrent + trackWidth;
+    timeMarker = -1 * timeMarker;
 end
 
 
@@ -115,6 +117,35 @@ endSprayTrack(:,2) = clamp.ymax + toolDistance;
 yDirectionABC = [176,0,40];
 endSprayTrack = [endSprayTrack,repmat(yDirectionABC,size(endSprayTrack,1),1)];
 endSprayTrack = [endSprayTrack(1,:);arcStartMark;endSprayTrack;arcEndMark];
+
+
+
+
+%小侧面小端
+xDirectionABC = [96 0 0];
+model = [clamp.xmin-toolDistance, clamp.ymin, clamp.zmin; clamp.xmin - toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideSSSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
+
+%小侧面大端
+model = [clamp.xmin-toolDistance, clamp.ymax, clamp.zmin; clamp.xmin - toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideSLSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
+
+
+%大侧面小端
+xDirectionABC = [-84,0,0];
+model = [clamp.xmax+toolDistance, clamp.ymin, clamp.zmin; clamp.xmax + toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideLSSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
+
+model = [clamp.xmax+toolDistance, clamp.ymax, clamp.zmin; clamp.xmax + toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideLLSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
+
+
+
+
+
+
+
+
 
 
 
@@ -167,6 +198,27 @@ hold on
 plot3(restoredHeadSprayTrack(:,1), restoredHeadSprayTrack(:,2), restoredHeadSprayTrack(:,3),'.-blue')
 hold on 
 plot3(restoredEndSprayTrack(:,1), restoredEndSprayTrack(:,2), restoredEndSprayTrack(:,3),'.-blue')
+
+
+
+
+restoredsideSSSprayTrack = restoreTrack(sideSSSprayTrack);
+hold on 
+plot3(restoredsideSSSprayTrack(:,1), restoredsideSSSprayTrack(:,2), restoredsideSSSprayTrack(:,3),'.-blue')
+
+restoredsideSLSprayTrack = restoreTrack(sideSLSprayTrack);
+hold on 
+plot3(restoredsideSLSprayTrack(:,1), restoredsideSLSprayTrack(:,2), restoredsideSLSprayTrack(:,3),'.-blue')
+
+
+
+restoredsideLSSprayTrack = restoreTrack(sideLSSprayTrack);
+hold on 
+plot3(restoredsideLSSprayTrack(:,1), restoredsideLSSprayTrack(:,2), restoredsideLSSprayTrack(:,3),'.-blue')
+
+restoredsideLLSprayTrack = restoreTrack(sideLLSprayTrack);
+hold on 
+plot3(restoredsideLLSprayTrack(:,1), restoredsideLLSprayTrack(:,2), restoredsideLLSprayTrack(:,3),'.-blue')
 
 
 
