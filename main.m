@@ -17,6 +17,7 @@ imagePath = 'Point';
 
 
 
+
 %合成20张点云图片
 points = concatenate(PicQuantity,vehicleX,vehicleY,houseNum,imagePath,fastBoot,xRotate,yRotate,zRotate);
 
@@ -25,11 +26,25 @@ points = concatenate(PicQuantity,vehicleX,vehicleY,houseNum,imagePath,fastBoot,x
 Locks = clampSegment(points);
 
 
+radius = 290;
+deltaZ = 223;
+
+
+
 %计算大于1200的上半件
 for i = 1:size(Locks,2)
-if Locks(i).type == "上半件" && Locks(i).lengthType == "long"
-topMoreThan1200(Locks(i));
+% if Locks(i).type == "上半件" && Locks(i).lengthType == "long"
+% [radius,deltaZ] = topMoreThan1200(Locks(i));
+% end
+
+if Locks(i).type == "下半件" && Locks(i).lengthType == "long"
+bottomMoreThan1200(Locks(i), radius,deltaZ);
 end
+
+
+
+
+
 end
 
 

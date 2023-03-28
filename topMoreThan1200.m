@@ -1,4 +1,4 @@
-function topMoreThan1200(clamp)
+function [r, deltaZ] = topMoreThan1200(clamp)
 
 twoSideDistance = 150;
 side = 10;
@@ -23,6 +23,7 @@ biggerCaptured(2) = topCaptured(2);
 %计算圆心和半径
 [pc,r] = points2circle(topCaptured,smallerCaptured,biggerCaptured);
 h = pc(3); % 高度
+deltaZ = clamp.panel - h;
 pos = [pc(1),pc(2)]; % 圆心位置
 t=0:0.1:(2*pi);  % 圆滑性设置
 t=[t,0];
