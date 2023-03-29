@@ -1,6 +1,6 @@
 function bottomMoreThan1200(clamp, radius, deltaZ)
 
-close all;
+% close all;
 debug = 1;
 toolDistance = 190;
 trackWidth = 190;
@@ -44,20 +44,27 @@ endSprayTrack = [endSprayTrack,repmat(yDirectionABC,size(endSprayTrack,1),1)];
 endSprayTrack = [endSprayTrack(1,:);arcStartMark;endSprayTrack;arcEndMark];
 
 
+[wallSSSpraytrack, wallSLSpraytrack] = getWallTrack(clamp,matchingCircle,pc,r,-1.1,1.8,toolDistance,trackWidth);
+[wallLSSpraytrack, wallLLSpraytrack] = getWallTrack(clamp,matchingCircle,pc,r,1.1,1.8,toolDistance,trackWidth);
 
 
-matchingCircleWall = matchingCircle;
-matchingCircleWall(:,1) = matchingCircleWall(:,1) - 1.1*radius - toolDistance;
-matchingCircleWall(:,3) =  matchingCircleWall(:,3) + 1.8*radius + toolDistance;
+%小侧面小端
+xDirectionABC = [96 0 0];
+model = [clamp.xmin-toolDistance, clamp.ymin, clamp.zmin; clamp.xmin - toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideSSSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
 
-pc(1) = pc(1) - 1.1*radius - toolDistance;
+%小侧面大端
+model = [clamp.xmin-toolDistance, clamp.ymax, clamp.zmin; clamp.xmin - toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideSLSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
 
-pc(3) = pc(3) + 1.8*radius + toolDistance;
 
-[row,~] = find(matchingCircleWall(:,1)>pc(1) & matchingCircleWall(:,3)<pc(3));
+%大侧面小端
+xDirectionABC = [-84,0,0];
+model = [clamp.xmax+toolDistance, clamp.ymin, clamp.zmin; clamp.xmax + toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideLSSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
 
-arcWall = matchingCircleWall(row,:);
-
+model = [clamp.xmax+toolDistance, clamp.ymax, clamp.zmin; clamp.xmax + toolDistance, (clamp.ymax+clamp.ymin)/2,  clamp.zmin];
+sideLLSprayTrack = getSideTrack(clamp, xDirectionABC, model, trackWidth);
 
 
 
@@ -82,21 +89,72 @@ arcWall = matchingCircleWall(row,:);
 
 if debug == 1
 
-pcshow(clamp.pointCloud);
-hold on
-pcshow(pointCloud(matchingCircle,"Color",'cyan'));
-restoredHeadSprayTrack = restoreTrack(headSprayTrack);
-restoredEndSprayTrack = restoreTrack(endSprayTrack);
-hold on 
-plot3(restoredHeadSprayTrack(:,1), restoredHeadSprayTrack(:,2), restoredHeadSprayTrack(:,3),'.-blue')
-hold on 
-plot3(restoredEndSprayTrack(:,1), restoredEndSprayTrack(:,2), restoredEndSprayTrack(:,3),'.-blue')
+    pcshow(clamp.pointCloud);
+    hold on
+    pcshow(pointCloud(matchingCircle,"Color",'cyan'));
+    restoredHeadSprayTrack = restoreTrack(headSprayTrack);
+    restoredEndSprayTrack = restoreTrack(endSprayTrack);
+    hold on
+    plot3(restoredHeadSprayTrack(:,1), restoredHeadSprayTrack(:,2), restoredHeadSprayTrack(:,3),'.-blue')
+    hold on
+    plot3(restoredEndSprayTrack(:,1), restoredEndSprayTrack(:,2), restoredEndSprayTrack(:,3),'.-blue')
 
-% hold on
-% pcshow(pointCloud(matchingCircleWall,"Color",'cyan'));
+    % hold on
+    % pcshow(pointCloud(matchingCircleWall,"Color",'cyan'));
 
-hold on
-pcshow(pointCloud(arcWall,"Color",'cyan'));
+    %     hold on
+    %     pcshow(pointCloud(arcWall,"Color",'cyan'));
+
+
+    % for i=1:size(allTracksDiscrete,3)
+    % restoredAllTracksDiscrete = restoreTrack(allTracksDiscrete(:,:,i));
+    % hold on
+    % plot3(restoredAllTracksDiscrete(:,1), restoredAllTracksDiscrete(:,2), restoredAllTracksDiscrete(:,3),'.-blue')
+    % end
+
+
+    restoredWallSSSpraytrack = restoreTrack(wallSSSpraytrack);
+    hold on
+    plot3(restoredWallSSSpraytrack(:,1), restoredWallSSSpraytrack(:,2), restoredWallSSSpraytrack(:,3),'.-blue')
+
+    restoredWallSLSpraytrack = restoreTrack(wallSLSpraytrack);
+    hold on
+    plot3(restoredWallSLSpraytrack(:,1), restoredWallSLSpraytrack(:,2), restoredWallSLSpraytrack(:,3),'.-blue')
+
+
+    restoredWallLSSpraytrack = restoreTrack(wallLSSpraytrack);
+    hold on
+    plot3(restoredWallLSSpraytrack(:,1), restoredWallLSSpraytrack(:,2), restoredWallLSSpraytrack(:,3),'.-blue')
+
+    restoredWallLLSpraytrack = restoreTrack(wallLLSpraytrack);
+    hold on
+    plot3(restoredWallLLSpraytrack(:,1), restoredWallLLSpraytrack(:,2), restoredWallLLSpraytrack(:,3),'.-blue')
+
+
+
+    restoredsideSSSprayTrack = restoreTrack(sideSSSprayTrack);
+    hold on
+    plot3(restoredsideSSSprayTrack(:,1), restoredsideSSSprayTrack(:,2), restoredsideSSSprayTrack(:,3),'.-blue')
+
+    restoredsideSLSprayTrack = restoreTrack(sideSLSprayTrack);
+    hold on
+    plot3(restoredsideSLSprayTrack(:,1), restoredsideSLSprayTrack(:,2), restoredsideSLSprayTrack(:,3),'.-blue')
+
+
+
+    restoredsideLSSprayTrack = restoreTrack(sideLSSprayTrack);
+    hold on
+    plot3(restoredsideLSSprayTrack(:,1), restoredsideLSSprayTrack(:,2), restoredsideLSSprayTrack(:,3),'.-blue')
+
+    restoredsideLLSprayTrack = restoreTrack(sideLLSprayTrack);
+    hold on
+    plot3(restoredsideLLSprayTrack(:,1), restoredsideLLSprayTrack(:,2), restoredsideLLSprayTrack(:,3),'.-blue')
+
+
+
+
+
+
 
 end
 

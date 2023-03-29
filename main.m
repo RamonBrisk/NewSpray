@@ -23,20 +23,37 @@ points = concatenate(PicQuantity,vehicleX,vehicleY,houseNum,imagePath,fastBoot,x
 
 
 %点云分割
-Locks = clampSegment(points);
+% Locks = clampSegment(points);
+
+
+
+
+whole = pcread("wholePC.ply");
+Locks = clampSegment(whole);
 
 
 radius = 290;
 deltaZ = 223;
 
 
-
+close all
+figure
 %计算大于1200的上半件
 for i = 1:size(Locks,2)
-% if Locks(i).type == "上半件" && Locks(i).lengthType == "long"
-% [radius,deltaZ] = topMoreThan1200(Locks(i));
+
+if Locks(i).type == "上半件" && Locks(i).lengthType == "short"
+[radius,deltaZ] = topLessThan1200(Locks(i));
+end
+% if Locks(i).type == "下半件" && Locks(i).lengthType == "short"
+% bottomMoreThan1200(Locks(i), radius,deltaZ);
 % end
 
+
+
+
+if Locks(i).type == "上半件" && Locks(i).lengthType == "long"
+[radius,deltaZ] = topMoreThan1200(Locks(i));
+end
 if Locks(i).type == "下半件" && Locks(i).lengthType == "long"
 bottomMoreThan1200(Locks(i), radius,deltaZ);
 end
